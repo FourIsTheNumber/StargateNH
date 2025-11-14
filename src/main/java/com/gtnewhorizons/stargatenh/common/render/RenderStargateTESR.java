@@ -1,14 +1,15 @@
 package com.gtnewhorizons.stargatenh.common.render;
 
-import com.gtnewhorizons.stargatenh.common.tileentity.TileStargateController;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
+
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderStargateTESR extends TileEntitySpecialRenderer {
@@ -24,10 +25,6 @@ public class RenderStargateTESR extends TileEntitySpecialRenderer {
 
     @Override
     public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks) {
-        if (!(te instanceof TileStargateController controller)) return;
-
-        if (!controller.isFormed()) return;
-
         GL11.glPushMatrix();
 
         GL11.glTranslated(x + 0.5, y, z + 0.5);

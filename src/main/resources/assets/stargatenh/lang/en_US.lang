@@ -1,2 +1,4 @@
-tile.stargate_ring.name=Stargate Ring Block
-tile.stargate_chevron.name=Stargate Chevron Block
+tile.stargate_block.0.name=Stargate Ring Block
+tile.stargate_block.1.name=Stargate Chevron Block
+tile.stargate_block.2.name=Stargate Controller Block
+tile.formed_stargate.name=Stargate
