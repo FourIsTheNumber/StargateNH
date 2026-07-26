@@ -8,31 +8,22 @@ tile.default_stargate_block.1.name=Stargate Chevron Block
 tile.default_stargate_controller.name=Stargate Controller Block
 tile.default_stargate_formed.name=Stargate
 
-tile.split_origin_stargate_block.0.name=Stargate Ring Block
-tile.split_origin_stargate_block.1.name=Stargate Chevron Block
-tile.split_origin_stargate_controller.name=Stargate Controller Block
-tile.split_origin_stargate_formed.name=Stargate of Split Origin (Legacy)
+tile.legacy_stargate_block.0.name=Stargate Ring Block %s
+tile.legacy_stargate_block.1.name=Stargate Chevron Block %s
+tile.legacy_stargate_controller.name=Stargate Controller Block %s
+tile.legacy_stargate_formed.name=Stargate %s (Legacy)
 
-tile.harmonic_breakthrough_stargate_block.0.name=Stargate Ring Block
-tile.harmonic_breakthrough_stargate_block.1.name=Stargate Chevron Block
-tile.harmonic_breakthrough_stargate_controller.name=Stargate Controller Block
-tile.harmonic_breakthrough_stargate_formed.name=Stargate of Harmonic Breakthrough (Legacy)
+affix.split_origin=of Split Origin
+affix.polychrome_contest=of Polychrome Contest
+affix.dimensional_duplicity=of Dimensional Duplicity
+affix.harmonic_breakthrough=of Harmonic Breakthrough
+affix.heavenly_fire=of Heavenly Fire
 
-tile.polychrome_contest_stargate_block.0.name=Stargate Ring Block
-tile.polychrome_contest_stargate_block.1.name=Stargate Chevron Block
-tile.polychrome_contest_stargate_controller.name=Stargate Controller Block
-tile.polychrome_contest_stargate_formed.name=Stargate of Polychrome Contest (Legacy)
-
-tile.dimensional_duplicity_stargate_block.0.name=Stargate Ring Block
-tile.dimensional_duplicity_stargate_block.1.name=Stargate Chevron Block
-tile.dimensional_duplicity_stargate_controller.name=Stargate Controller Block
-tile.dimensional_duplicity_stargate_formed.name=Stargate of Dimensional Duplicity (Legacy)
-
-tile.heavenly_fire_stargate_block.0.name=Stargate Ring Block
-tile.heavenly_fire_stargate_block.1.name=Stargate Chevron Block
-tile.heavenly_fire_stargate_controller.name=Stargate Controller Block
-tile.heavenly_fire_stargate_formed.name=Stargate of Heavenly Fire (Legacy)
-
+tooltip.split_origin=§eThe first conquering §9(2.1.0.0)
+tooltip.polychrome_contest=§bRace for the infinite §9(2.1.2.3qf)
+tooltip.dimensional_duplicity=§dDawn of the new age §9(2.2.3)
+tooltip.harmonic_breakthrough=§5Universes torn apart §9(2.3.0)
+tooltip.heavenly_fire=§6Stars forged anew §9(2.7.0)
 
 ### Elements
 ## Gui

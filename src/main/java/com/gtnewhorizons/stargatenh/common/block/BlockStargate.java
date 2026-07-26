@@ -8,26 +8,29 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import com.gtnewhorizon.gtnhlib.blockpos.BlockPos;
+import com.gtnewhorizons.stargatenh.ModBlocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStargate extends Block {
 
-    private final String id;
+    public final ModBlocks.StargateBlocks blockGroup;
 
-    public BlockStargate(String id) {
+    public BlockStargate(ModBlocks.StargateBlocks blockGroup) {
         super(Material.iron);
-        this.id = id;
-        this.setBlockName(id + "_stargate_block");
+        this.blockGroup = blockGroup;
+        this.setBlockName(blockGroup.id + "_stargate_block");
     }
 
     public int damageDropped(int meta) {
@@ -48,9 +51,9 @@ public class BlockStargate extends Block {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister iconRegister) {
-        ringTextureSide = iconRegister.registerIcon("stargatenh:" + id + "/stargate_side");
-        ringTextureTop = iconRegister.registerIcon("stargatenh:" + id + "/stargate_top");
-        chevronTexture = iconRegister.registerIcon("stargatenh:" + id + "/stargate_chevron");
+        ringTextureSide = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/stargate_side");
+        ringTextureTop = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/stargate_top");
+        chevronTexture = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/stargate_chevron");
     }
 
     @Override
@@ -107,7 +110,38 @@ public class BlockStargate extends Block {
 
         @Override
         public String getUnlocalizedName(final ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return "tile.legacy_stargate_block." + stack.getItemDamage();
+                }
+            }
+
             return this.getUnlocalizedName() + "." + stack.getItemDamage();
+        }
+
+        @Override
+        public String getItemStackDisplayName(ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return StatCollector.translateToLocalFormatted(
+                        getUnlocalizedName(stack) + ".name",
+                        StatCollector.translateToLocal("affix." + stargateBlock.blockGroup.id));
+                }
+            }
+            return super.getItemStackDisplayName(stack);
+        }
+
+        @Override
+        public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    tooltip.add(StatCollector.translateToLocal("tooltip." + stargateBlock.blockGroup.id));
+                }
+            }
+            super.addInformation(stack, player, tooltip, advanced);
         }
     }
 }

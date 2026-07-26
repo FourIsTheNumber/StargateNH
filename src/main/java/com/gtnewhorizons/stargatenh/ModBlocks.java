@@ -5,9 +5,11 @@ import net.minecraft.item.ItemStack;
 
 import com.gtnewhorizons.stargatenh.common.block.BlockDialingDevice;
 import com.gtnewhorizons.stargatenh.common.block.BlockFormedGate;
+import com.gtnewhorizons.stargatenh.common.block.BlockFormedGate.ItemBlockFormedGate;
 import com.gtnewhorizons.stargatenh.common.block.BlockStargate;
 import com.gtnewhorizons.stargatenh.common.block.BlockStargate.ItemBlockStargate;
 import com.gtnewhorizons.stargatenh.common.block.BlockStargateController;
+import com.gtnewhorizons.stargatenh.common.block.BlockStargateController.ItemBlockStargateController;
 
 import codechicken.nei.api.API;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -21,8 +23,12 @@ public class ModBlocks {
 
         for (StargateBlocks blocks : StargateBlocks.values()) {
             GameRegistry.registerBlock(blocks.stargateBlock, ItemBlockStargate.class, blocks.id + "_stargate_block");
-            GameRegistry.registerBlock(blocks.controllerBlock, blocks.id + "_stargate_controller");
-            GameRegistry.registerBlock(blocks.formedGateBlock, blocks.id + "_stargate_formed");
+            GameRegistry.registerBlock(
+                blocks.controllerBlock,
+                ItemBlockStargateController.class,
+                blocks.id + "_stargate_controller");
+            GameRegistry
+                .registerBlock(blocks.formedGateBlock, ItemBlockFormedGate.class, blocks.id + "_stargate_formed");
 
             API.hideItem(new ItemStack(blocks.formedGateBlock));
         }
@@ -30,21 +36,23 @@ public class ModBlocks {
 
     public enum StargateBlocks {
 
-        Default("default"),
-        SplitOrigin("split_origin"),
-        PolychromeContest("polychrome_contest"),
-        DimensionalDuplicity("dimensional_duplicity"),
-        HarmonicBreakthrough("harmonic_breakthrough"),
-        HeavenlyFire("heavenly_fire"),;
+        Default("default", false),
+        SplitOrigin("split_origin", true),
+        PolychromeContest("polychrome_contest", true),
+        DimensionalDuplicity("dimensional_duplicity", true),
+        HarmonicBreakthrough("harmonic_breakthrough", true),
+        HeavenlyFire("heavenly_fire", true),;
 
         public final String id;
+        public final boolean isLegacy;
         public final BlockStargate stargateBlock;
         public final BlockStargateController controllerBlock;
         public final BlockFormedGate formedGateBlock;
 
-        StargateBlocks(String id) {
+        StargateBlocks(String id, boolean isLegacy) {
             this.id = id;
-            stargateBlock = new BlockStargate(id);
+            this.isLegacy = isLegacy;
+            stargateBlock = new BlockStargate(this);
             controllerBlock = new BlockStargateController(this);
             formedGateBlock = new BlockFormedGate(this);
         }

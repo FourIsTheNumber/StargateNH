@@ -1,12 +1,17 @@
 package com.gtnewhorizons.stargatenh.common.block;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -18,7 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockStargateController extends Block {
 
-    private final ModBlocks.StargateBlocks blockGroup;
+    public final ModBlocks.StargateBlocks blockGroup;
 
     public BlockStargateController(ModBlocks.StargateBlocks blockGroup) {
         super(Material.iron);
@@ -161,5 +166,48 @@ public class BlockStargateController extends Block {
                 new BlockPos(-0, dy, dx);
             default -> new BlockPos(dx, dy, 0);
         };
+    }
+
+    public static class ItemBlockStargateController extends ItemBlock {
+
+        public ItemBlockStargateController(Block block) {
+            super(block);
+        }
+
+        @Override
+        public String getUnlocalizedName(final ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargateController stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return "tile.legacy_stargate_controller";
+                }
+            }
+
+            return super.getUnlocalizedName(stack);
+        }
+
+        @Override
+        public String getItemStackDisplayName(ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargateController stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return StatCollector.translateToLocalFormatted(
+                        getUnlocalizedName(stack) + ".name",
+                        StatCollector.translateToLocal("affix." + stargateBlock.blockGroup.id));
+                }
+            }
+            return super.getItemStackDisplayName(stack);
+        }
+
+        @Override
+        public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockStargateController stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    tooltip.add(StatCollector.translateToLocal("tooltip." + stargateBlock.blockGroup.id));
+                }
+            }
+            super.addInformation(stack, player, tooltip, advanced);
+        }
     }
 }

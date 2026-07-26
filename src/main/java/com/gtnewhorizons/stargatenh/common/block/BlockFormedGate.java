@@ -7,9 +7,12 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import com.gtnewhorizons.stargatenh.ModBlocks;
@@ -21,7 +24,7 @@ import com.gtnewhorizons.stargatenh.common.tileentity.TileStargateController;
  */
 public class BlockFormedGate extends BlockContainer {
 
-    private final ModBlocks.StargateBlocks blockGroup;
+    public final ModBlocks.StargateBlocks blockGroup;
 
     public BlockFormedGate(ModBlocks.StargateBlocks blockGroup) {
         super(Material.iron);
@@ -76,11 +79,10 @@ public class BlockFormedGate extends BlockContainer {
             ItemStack drop = switch (meta) {
                 case 0 -> new ItemStack(blockGroup.stargateBlock, 1, 0);
                 case 1 -> new ItemStack(blockGroup.stargateBlock, 1, 1);
-                case 2 -> new ItemStack(blockGroup.controllerBlock, 1, 0);
-                default -> null;
+                default -> new ItemStack(blockGroup.controllerBlock, 1, 0);
             };
 
-            if (drop != null) dropBlockAsItem(world, x, y, z, drop);
+            dropBlockAsItem(world, x, y, z, drop);
         }
         super.breakBlock(world, x, y, z, block, meta);
     }
@@ -105,6 +107,49 @@ public class BlockFormedGate extends BlockContainer {
             if (teleportBox.intersectsWith(mask)) {
                 controller.doTeleport(entity);
             }
+        }
+    }
+
+    public static class ItemBlockFormedGate extends ItemBlock {
+
+        public ItemBlockFormedGate(Block block) {
+            super(block);
+        }
+
+        @Override
+        public String getUnlocalizedName(final ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockFormedGate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return "tile.legacy_stargate_formed";
+                }
+            }
+
+            return super.getUnlocalizedName(stack);
+        }
+
+        @Override
+        public String getItemStackDisplayName(ItemStack stack) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockFormedGate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    return StatCollector.translateToLocalFormatted(
+                        getUnlocalizedName(stack) + ".name",
+                        StatCollector.translateToLocal("affix." + stargateBlock.blockGroup.id));
+                }
+            }
+            return super.getItemStackDisplayName(stack);
+        }
+
+        @Override
+        public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+            ItemBlock block = (ItemBlock) stack.getItem();
+            if (block != null && block.field_150939_a instanceof BlockFormedGate stargateBlock) {
+                if (stargateBlock.blockGroup.isLegacy) {
+                    tooltip.add(StatCollector.translateToLocal("tooltip." + stargateBlock.blockGroup.id));
+                }
+            }
+            super.addInformation(stack, player, tooltip, advanced);
         }
     }
 }
