@@ -2,24 +2,32 @@ package com.gtnewhorizons.stargatenh.common.util;
 
 import java.util.Map;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.event.world.WorldEvent;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.gtnewhorizon.gtnhlib.blockpos.BlockPos;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class StargateRegistry extends WorldSavedData {
 
+    public static StargateRegistry INSTANCE;
     public static final String DATA_NAME = "StargateRegistry";
 
     private final BiMap<StargateAddress, BlockPos> registry = HashBiMap.create();
 
     public StargateRegistry() {
         super(DATA_NAME);
+    }
+
+    @SuppressWarnings("unused")
+    public StargateRegistry(String name) {
+        super(name);
     }
 
     public void register(StargateAddress addr, BlockPos pos) {
@@ -37,7 +45,8 @@ public class StargateRegistry extends WorldSavedData {
     }
 
     public StargateAddress lookup(BlockPos pos) {
-        return registry.inverse().get(pos);
+        return registry.inverse()
+            .get(pos);
     }
 
     @Override
@@ -78,15 +87,19 @@ public class StargateRegistry extends WorldSavedData {
         nbt.setTag("Entries", list);
     }
 
-    public static StargateRegistry get(World world) {
-        MapStorage storage = world.mapStorage;
-        StargateRegistry data = (StargateRegistry) storage.loadData(StargateRegistry.class, StargateRegistry.DATA_NAME);
+    public static class RegisterEvent {
 
-        if (data == null) {
-            data = new StargateRegistry();
-            storage.setData(StargateRegistry.DATA_NAME, data);
+        @SubscribeEvent
+        public void onWorldLoad(WorldEvent.Load event) {
+            if (!event.world.isRemote && event.world.provider.dimensionId == 0) {
+                MapStorage storage = event.world.mapStorage;
+                INSTANCE = (StargateRegistry) storage.loadData(StargateRegistry.class, DATA_NAME);
+                if (INSTANCE == null) {
+                    INSTANCE = new StargateRegistry();
+                    storage.setData(DATA_NAME, INSTANCE);
+                }
+                INSTANCE.markDirty();
+            }
         }
-
-        return data;
     }
 }

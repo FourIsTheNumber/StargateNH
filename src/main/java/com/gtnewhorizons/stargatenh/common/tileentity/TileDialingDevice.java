@@ -86,8 +86,8 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
     }
 
     private void buildSetupUI(ModularPanel panel, PanelSyncManager syncManager) {
-        StargateRegistry reg = StargateRegistry.get(worldObj);
-        BooleanSyncValue isUnique = new BooleanSyncValue(() -> reg.lookup(new StargateAddress(dialingAddress)) == null);
+        BooleanSyncValue isUnique = new BooleanSyncValue(
+            () -> StargateRegistry.INSTANCE.lookup(new StargateAddress(dialingAddress)) == null);
 
         syncManager.syncValue("isUnique", isUnique);
 
@@ -151,7 +151,7 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
                             for (int i = 0; i < dialingAddress.length; i++) {
                                 dialingAddress[i] = rng.nextInt(16);
                             }
-                        } while (reg.lookup(new StargateAddress(dialingAddress)) != null);
+                        } while (StargateRegistry.INSTANCE.lookup(new StargateAddress(dialingAddress)) != null);
                     }
                 }))
                 .setEnabledIf($ -> controller != null && !hasAddress()));

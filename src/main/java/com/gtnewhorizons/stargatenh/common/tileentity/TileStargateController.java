@@ -64,8 +64,7 @@ public class TileStargateController extends TileEntity {
         StargateAddress sga = new StargateAddress(sigils);
         if (sga.equals(address)) return false;
 
-        StargateRegistry reg = StargateRegistry.get(worldObj);
-        BlockPos dialedGate = reg.lookup(sga);
+        BlockPos dialedGate = StargateRegistry.INSTANCE.lookup(sga);
         if (dialedGate == null) return false;
 
         TileStargateController gate = ((TileStargateController) worldObj
@@ -94,11 +93,10 @@ public class TileStargateController extends TileEntity {
     public void setAddress(int[] sigils) {
         if (hasAddress) return;
 
-        StargateRegistry reg = StargateRegistry.get(worldObj);
         StargateAddress sga = new StargateAddress(sigils);
 
-        if (reg.lookup(sga) == null) {
-            reg.register(sga, new BlockPos(xCoord, yCoord, zCoord));
+        if (StargateRegistry.INSTANCE.lookup(sga) == null) {
+            StargateRegistry.INSTANCE.register(sga, new BlockPos(xCoord, yCoord, zCoord));
             hasAddress = true;
             address = sga;
         }
@@ -118,8 +116,7 @@ public class TileStargateController extends TileEntity {
     @Override
     public void invalidate() {
         if (hasAddress) {
-            StargateRegistry reg = StargateRegistry.get(worldObj);
-            reg.unregister(address);
+            StargateRegistry.INSTANCE.unregister(address);
         }
         super.invalidate();
     }
@@ -127,8 +124,7 @@ public class TileStargateController extends TileEntity {
     @Override
     public void updateEntity() {
         if (!worldObj.isRemote && address == null && hasAddress) {
-            StargateRegistry reg = StargateRegistry.get(worldObj);
-            address = reg.lookup(new BlockPos(xCoord, yCoord, zCoord));
+            address = StargateRegistry.INSTANCE.lookup(new BlockPos(xCoord, yCoord, zCoord));
         }
 
         prevRingRotation = ringRotation;
