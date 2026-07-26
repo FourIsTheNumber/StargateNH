@@ -1,5 +1,7 @@
 package com.gtnewhorizons.stargatenh.common.tileentity;
 
+import static com.gtnewhorizons.stargatenh.StargateNH.MODID;
+
 import java.util.Random;
 
 import net.minecraft.tileentity.TileEntity;
@@ -9,6 +11,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.drawable.DynamicDrawable;
 import com.cleanroommc.modularui.factory.PosGuiData;
 import com.cleanroommc.modularui.screen.ModularPanel;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.screen.UISettings;
 import com.cleanroommc.modularui.value.sync.BooleanSyncValue;
 import com.cleanroommc.modularui.value.sync.IntSyncValue;
@@ -66,6 +69,17 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
 
         syncManager.syncValue("isUnique", isUnique);
 
+        syncManager.registerServerSyncedAction("set_address", $ -> { controller.setAddress(registryAddress); });
+
+        syncManager.registerServerSyncedAction("generate_random", $ -> {
+            Random rng = new Random();
+            do {
+                for (int i = 0; i < registryAddress.length; i++) {
+                    registryAddress[i] = rng.nextInt(16);
+                }
+            } while (reg.lookup(new StargateAddress(registryAddress)) != null);
+        });
+
         panel.child(
             IKey.lang("stargatenh.gui.dialing_device.set_address")
                 .asWidget()
@@ -98,17 +112,10 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
                 .size(18, 18)
                 .tooltip(t -> t.add(IKey.lang("stargatenh.tooltip.dialing_device.generate_random")))
                 .overlay(UITextures.OVERLAY_RANDOM)
-                .syncHandler(
-                    new InteractionSyncHandler().allowC2S()
-                        .setOnMousePressed(mouseData -> {
-                            Random rng = new Random();
-                            do {
-                                for (IntSyncValue chevron : chevrons) {
-                                    chevron.setIntValue(rng.nextInt(16));
-                                }
-                                isUnique.updateCacheFromSource(false);
-                            } while (!isUnique.getBoolValue());
-                        })));
+                .onMousePressed(mouseButton -> {
+                    syncManager.callSyncedAction("generate_random");
+                    return true;
+                }));
 
         panel.child(
             IKey.lang(
@@ -125,12 +132,10 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
                 .tooltip(t -> t.add(IKey.lang("stargatenh.tooltip.dialing_device.lock_address")))
                 .setEnabledIf(ignored -> isUnique.getBoolValue())
                 .overlay(UITextures.OVERLAY_CHECK)
-                .syncHandler(
-                    new InteractionSyncHandler().allowC2S()
-                        .setOnMousePressed(mouseData -> {
-                            controller.setAddress(registryAddress);
-                            panel.closeIfOpen();
-                        })));
+                .syncHandler(new InteractionSyncHandler().setOnMousePressed(mouseButton -> {
+                    syncManager.callSyncedAction("set_address");
+                    panel.closeIfOpen();
+                })));
     }
 
     private void buildDialingUI(ModularPanel panel, PanelSyncManager syncManager) {
@@ -176,5 +181,10 @@ public class TileDialingDevice extends TileEntity implements IGuiHolder<PosGuiDa
                 .syncHandler(
                     new InteractionSyncHandler().allowC2S()
                         .setOnMousePressed(mouseData -> { controller.dialOut(dialingAddress); })));
+    }
+
+    @Override
+    public ModularScreen createScreen(PosGuiData data, ModularPanel mainPanel) {
+        return new ModularScreen(MODID, mainPanel);
     }
 }
