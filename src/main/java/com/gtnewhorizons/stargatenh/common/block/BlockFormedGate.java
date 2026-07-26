@@ -30,6 +30,7 @@ public class BlockFormedGate extends BlockContainer {
         super(Material.iron);
         this.blockGroup = blockGroup;
         setBlockName(blockGroup.id + "_stargate_formed");
+        setBlockTextureName("stargatenh:stargate_formed");
     }
 
     @Override
