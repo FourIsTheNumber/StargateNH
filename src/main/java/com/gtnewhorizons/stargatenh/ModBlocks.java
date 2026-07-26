@@ -32,11 +32,10 @@ public class ModBlocks {
 
         Default("default"),
         SplitOrigin("split_origin"),
-        HarmonicBreakthrough("harmonic_breakthrough"),
         PolychromeContest("polychrome_contest"),
         DimensionalDuplicity("dimensional_duplicity"),
-        // HeavenlyFire("heavenly_fire"),
-        ;
+        HarmonicBreakthrough("harmonic_breakthrough"),
+        HeavenlyFire("heavenly_fire"),;
 
         public final String id;
         public final BlockStargate stargateBlock;
