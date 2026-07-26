@@ -176,6 +176,10 @@ public class TileStargateController extends TileEntity {
         return address.toString();
     }
 
+    public StargateAddress getAddress() {
+        return address;
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("hasAddress", hasAddress);
