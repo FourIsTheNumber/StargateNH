@@ -1,7 +1,7 @@
 package com.gtnewhorizons.stargatenh;
 
-import codechicken.nei.api.API;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 
 import com.gtnewhorizons.stargatenh.common.block.BlockDialingDevice;
 import com.gtnewhorizons.stargatenh.common.block.BlockFormedGate;
@@ -9,9 +9,8 @@ import com.gtnewhorizons.stargatenh.common.block.BlockStargate;
 import com.gtnewhorizons.stargatenh.common.block.BlockStargate.ItemBlockStargate;
 import com.gtnewhorizons.stargatenh.common.block.BlockStargateController;
 
+import codechicken.nei.api.API;
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.item.ItemStack;
-import org.lwjgl.opengl.ARBCompressedTexturePixelStorage;
 
 public class ModBlocks {
 
@@ -30,12 +29,13 @@ public class ModBlocks {
     }
 
     public enum StargateBlocks {
+
         Default("default"),
         SplitOrigin("split_origin"),
         HarmonicBreakthrough("harmonic_breakthrough"),
         PolychromeContest("polychrome_contest"),
         DimensionalDuplicity("dimensional_duplicity"),
-        //HeavenlyFire("heavenly_fire"),
+        // HeavenlyFire("heavenly_fire"),
         ;
 
         public final String id;
