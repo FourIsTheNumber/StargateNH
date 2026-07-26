@@ -36,9 +36,9 @@ public class RenderStargateTESR extends TileEntitySpecialRenderer {
         GL11.glTranslated(x + 0.5, y + 2.5, z + 0.5);
 
         float angle = switch (facing) {
-            case 4 -> 90F;
-            case 3 -> 180F;
-            case 2 -> -90F;
+            case 2 -> 90F;
+            case 4 -> 180F;
+            case 3 -> -90F;
             default -> 0F;
         };
         GL11.glRotatef(angle, 0F, 1F, 0F);

@@ -1,14 +1,19 @@
 package com.gtnewhorizons.stargatenh.common.block;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import com.gtnewhorizon.gtnhlib.blockpos.BlockPos;
 import com.gtnewhorizons.stargatenh.ModBlocks;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockStargateController extends Block {
 
@@ -20,9 +25,29 @@ public class BlockStargateController extends Block {
         this.setBlockName(blockGroup.id + "_stargate_controller");
     }
 
+    IIcon topIcon;
+    IIcon sideIcon;
+    IIcon frontIcon;
+
     @Override
-    protected String getTextureName() {
-        return "stargatenh:" + blockGroup.id + "/controller";
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        topIcon = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/stargate_top");
+        sideIcon = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/stargate_side");
+        frontIcon = iconRegister.registerIcon("stargatenh:" + blockGroup.id + "/controller");
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int meta) {
+        // Item rendering trick
+        if (meta == 0) meta = 3;
+
+        if (side == ForgeDirection.DOWN.ordinal() || side == ForgeDirection.UP.ordinal()) {
+            return topIcon;
+        }
+        if (side == meta) return frontIcon;
+        return sideIcon;
     }
 
     @Override
@@ -33,8 +58,13 @@ public class BlockStargateController extends Block {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
-        int direction = MathHelper.floor_double((placer.rotationYaw / 90F) + 0.5D) & 3;
-        world.setBlockMetadataWithNotify(x, y, z, direction, 2);
+        byte meta = switch (MathHelper.floor_double((double)(placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3) {
+            case 0 -> 2;
+            case 1 -> 5;
+            case 2 -> 3;
+            default -> 4;
+        };
+        world.setBlockMetadataWithNotify(x, y, z, meta, 2);
     }
 
     public void runStructureCheck(World world, int x, int y, int z) {
@@ -80,7 +110,7 @@ public class BlockStargateController extends Block {
         setRel(world, x, y, z, facing, 1, 4, blockGroup.formedGateBlock, 0);
         setRel(world, x, y, z, facing, 2, 4, blockGroup.formedGateBlock, 1);
 
-        world.setBlock(x, y, z, blockGroup.formedGateBlock, facing + 2, 3);
+        world.setBlock(x, y, z, blockGroup.formedGateBlock, facing, 3);
     }
 
     private void deform(World world, int x, int y, int z, int facing) {
@@ -120,13 +150,13 @@ public class BlockStargateController extends Block {
 
     private static BlockPos rotate(int dx, int dy, int facing) {
         return switch (facing) {
-            case 0 -> // NORTH (-Z)
+            case 2 -> // NORTH (-Z)
                 new BlockPos(dx, dy, 0);
-            case 1 -> // EAST (+X)
+            case 5 -> // EAST (+X)
                 new BlockPos(0, dy, -dx);
-            case 2 -> // SOUTH (+Z)
+            case 3 -> // SOUTH (+Z)
                 new BlockPos(-dx, dy, -0);
-            case 3 -> // WEST (-X)
+            case 4 -> // WEST (-X)
                 new BlockPos(-0, dy, dx);
             default -> new BlockPos(dx, dy, 0);
         };

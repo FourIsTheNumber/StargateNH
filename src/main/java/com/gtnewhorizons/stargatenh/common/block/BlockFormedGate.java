@@ -57,11 +57,11 @@ public class BlockFormedGate extends BlockContainer {
     @Override
     public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
         if (!(world.getTileEntity(x, y, z) instanceof TileStargateController controller))
-            return super.getSelectedBoundingBoxFromPool(world, x, y, z);;
-        if (controller.facing == 0 || controller.facing == 2) {
-            return AxisAlignedBB.getBoundingBox(x - 1, y + 1, z, x + 2, y + 4, z + 1);
+            return super.getSelectedBoundingBoxFromPool(world, x, y, z);
+        if (controller.facing == 3 || controller.facing == 2) {
+            return AxisAlignedBB.getBoundingBox(x - 2, y, z, x + 3, y + 5, z + 1);
         } else {
-            return AxisAlignedBB.getBoundingBox(x, y + 1, z - 1, x + 1, y + 4, z + 2);
+            return AxisAlignedBB.getBoundingBox(x, y, z - 2, x + 1, y + 5, z + 3);
         }
     }
 

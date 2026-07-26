@@ -22,7 +22,7 @@ public class ModBlocks {
 
         for (StargateBlocks blocks : StargateBlocks.values()) {
             GameRegistry.registerBlock(blocks.stargateBlock, ItemBlockStargate.class, blocks.id + "_stargate_block");
-            GameRegistry.registerBlock(blocks.controllerBlock, ItemBlockStargate.class, blocks.id + "_stargate_controller");
+            GameRegistry.registerBlock(blocks.controllerBlock, blocks.id + "_stargate_controller");
             GameRegistry.registerBlock(blocks.formedGateBlock, blocks.id + "_stargate_formed");
 
             API.hideItem(new ItemStack(blocks.formedGateBlock));
