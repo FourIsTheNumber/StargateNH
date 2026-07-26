@@ -39,3 +39,7 @@ stargatenh.gui.dialing_device.operational=Stargate operational.
 stargatenh.tooltip.dialing_device.generate_random=Generate a random unused address
 stargatenh.tooltip.dialing_device.lock_address=Lock in stargate address
 stargatenh.tooltip.dialing_device.dial_address=Dial address
+
+## Waila
+waila.sgnh.formed_gate=Address: 
+waila.sgnh.not_set=Not Set

@@ -156,4 +156,8 @@ public class TileStargateController extends TileEntity {
         animStartTick = worldObj.getWorldTime();
         dialPhase = DialPhase.SPINNING;
     }
+
+    public String getAddressString() {
+        return address.toString();
+    }
 }

@@ -24,6 +24,33 @@ public final class StargateAddress {
 
     @Override
     public String toString() {
-        return Arrays.toString(sigils);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 7; i++) {
+            builder.append(getSigilChar(sigils[i]));
+            builder.append(' ');
+        }
+        return builder.toString();
+    }
+
+    public char getSigilChar(int i) {
+        return switch (i) {
+            case 0 -> 'A';
+            case 1 -> 'O';
+            case 2 -> 'T';
+            case 3 -> 'D';
+            case 4 -> 'P';
+            case 5 -> 'F';
+            case 6 -> 'H';
+            case 7 -> 'L';
+            case 8 -> 'M';
+            case 9 -> 'I';
+            case 10 -> 'E';
+            case 11 -> 'J';
+            case 12 -> 'G';
+            case 13 -> 'K';
+            case 14 -> 'B';
+            case 15 -> 'C';
+            default -> 'Z';
+        };
     }
 }

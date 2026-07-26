@@ -1,4 +1,4 @@
-package com.gtnewhorizons.stargatenh.common.render;
+package com.gtnewhorizons.stargatenh.client.render;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
