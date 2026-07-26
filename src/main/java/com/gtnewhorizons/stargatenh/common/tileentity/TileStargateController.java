@@ -2,6 +2,7 @@ package com.gtnewhorizons.stargatenh.common.tileentity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 
@@ -115,7 +116,21 @@ public class TileStargateController extends TileEntity {
     }
 
     @Override
+    public void invalidate() {
+        if (hasAddress) {
+            StargateRegistry reg = StargateRegistry.get(worldObj);
+            reg.unregister(address);
+        }
+        super.invalidate();
+    }
+
+    @Override
     public void updateEntity() {
+        if (!worldObj.isRemote && address == null && hasAddress) {
+            StargateRegistry reg = StargateRegistry.get(worldObj);
+            address = reg.lookup(new BlockPos(xCoord, yCoord, zCoord));
+        }
+
         prevRingRotation = ringRotation;
 
         if (dialPhase == DialPhase.SPINNING) {
@@ -159,5 +174,17 @@ public class TileStargateController extends TileEntity {
 
     public String getAddressString() {
         return address.toString();
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        compound.setBoolean("hasAddress", hasAddress);
+        super.writeToNBT(compound);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        hasAddress = compound.getBoolean("hasAddress");
+        super.readFromNBT(compound);
     }
 }

@@ -1,8 +1,9 @@
 package com.gtnewhorizons.stargatenh.common.util;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -15,14 +16,10 @@ public class StargateRegistry extends WorldSavedData {
 
     public static final String DATA_NAME = "StargateRegistry";
 
-    private final Map<StargateAddress, BlockPos> registry = new HashMap<>();
+    private final BiMap<StargateAddress, BlockPos> registry = HashBiMap.create();
 
     public StargateRegistry() {
         super(DATA_NAME);
-    }
-
-    public StargateRegistry(String name) {
-        super(name);
     }
 
     public void register(StargateAddress addr, BlockPos pos) {
@@ -37,6 +34,10 @@ public class StargateRegistry extends WorldSavedData {
 
     public BlockPos lookup(StargateAddress addr) {
         return registry.get(addr);
+    }
+
+    public StargateAddress lookup(BlockPos pos) {
+        return registry.inverse().get(pos);
     }
 
     @Override
