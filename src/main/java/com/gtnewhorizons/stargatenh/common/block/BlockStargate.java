@@ -78,7 +78,7 @@ public class BlockStargate extends Block {
         // Hard limit so nothing horrible happens
         if (checked.size() > 20) return;
         int meta = world.getBlockMetadata(x, y, z);
-        if (meta != 2) {
+        if (meta == 0 || meta == 1) {
             for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
                 int nx = x + dir.offsetX;
                 int ny = y + dir.offsetY;

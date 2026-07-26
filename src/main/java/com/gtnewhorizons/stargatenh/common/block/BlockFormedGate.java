@@ -1,6 +1,12 @@
 package com.gtnewhorizons.stargatenh.common.block;
 
+import static com.gtnewhorizons.stargatenh.common.util.StructureUtil.checkBlockAndMeta;
+import static com.gtnewhorizons.stargatenh.common.util.StructureUtil.deformRel;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -14,7 +20,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
+import com.gtnewhorizon.gtnhlib.blockpos.BlockPos;
 import com.gtnewhorizons.stargatenh.ModBlocks;
 import com.gtnewhorizons.stargatenh.common.tileentity.TileStargateController;
 
@@ -75,17 +83,15 @@ public class BlockFormedGate extends BlockContainer {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        if (!world.isRemote) {
-            ItemStack drop = switch (meta) {
-                case 0 -> new ItemStack(blockGroup.stargateBlock, 1, 0);
-                case 1 -> new ItemStack(blockGroup.stargateBlock, 1, 1);
-                default -> new ItemStack(blockGroup.controllerBlock, 1, 0);
-            };
-
-            dropBlockAsItem(world, x, y, z, drop);
-        }
-        super.breakBlock(world, x, y, z, block, meta);
+    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int meta, int fortune) {
+        ArrayList<ItemStack> drops = new ArrayList<>();
+        ItemStack drop = switch (meta) {
+            case 0 -> new ItemStack(blockGroup.stargateBlock, 1, 0);
+            case 1 -> new ItemStack(blockGroup.stargateBlock, 1, 1);
+            default -> new ItemStack(blockGroup.controllerBlock, 1, 0);
+        };
+        drops.add(drop);
+        return drops;
     }
 
     @Override
@@ -109,6 +115,83 @@ public class BlockFormedGate extends BlockContainer {
                 controller.doTeleport(entity);
             }
         }
+    }
+
+    @Override
+    public void breakBlock(World worldIn, int x, int y, int z, Block blockBroken, int meta) {
+        if (meta > 1) deform(worldIn, x, y, z, meta);
+        else {
+            Set<BlockPos> checked = new HashSet<>();
+            checked.add(new BlockPos(x, y, z));
+            findController(worldIn, x, y, z, checked);
+        }
+        super.breakBlock(worldIn, x, y, z, blockBroken, meta);
+    }
+
+    public void findController(World world, int x, int y, int z, Set<BlockPos> checked) {
+        // Hard limit so nothing horrible happens
+        if (checked.size() > 20) return;
+        int meta = world.getBlockMetadata(x, y, z);
+        if (meta == 0 || meta == 1) {
+            for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+                int nx = x + dir.offsetX;
+                int ny = y + dir.offsetY;
+                int nz = z + dir.offsetZ;
+
+                Block neighbor = world.getBlock(nx, ny, nz);
+
+                if (neighbor instanceof BlockFormedGate controller && world.getBlockMetadata(nx, ny, nz) > 1) {
+                    controller.runDeformCheck(world, nx, ny, nz);
+                } else if (neighbor == this && checked.add(new BlockPos(nx, ny, nz))) {
+                    findController(world, nx, ny, nz, checked);
+                }
+            }
+        }
+    }
+
+    public void runDeformCheck(World world, int x, int y, int z) {
+        int facing = world.getBlockMetadata(x, y, z);
+
+        if (!checkBlockAndMeta(world, x, y, z, -2, 0, blockGroup.formedGateBlock, 1, facing)
+            || !checkBlockAndMeta(world, x, y, z, -1, 0, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 1, 0, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 2, 0, blockGroup.formedGateBlock, 1, facing)
+
+            || !checkBlockAndMeta(world, x, y, z, -2, 1, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 2, 1, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, -2, 2, blockGroup.formedGateBlock, 1, facing)
+            || !checkBlockAndMeta(world, x, y, z, 2, 2, blockGroup.formedGateBlock, 1, facing)
+            || !checkBlockAndMeta(world, x, y, z, -2, 3, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 2, 3, blockGroup.formedGateBlock, 0, facing)
+
+            || !checkBlockAndMeta(world, x, y, z, -2, 4, blockGroup.formedGateBlock, 1, facing)
+            || !checkBlockAndMeta(world, x, y, z, -1, 4, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 0, 4, blockGroup.formedGateBlock, 1, facing)
+            || !checkBlockAndMeta(world, x, y, z, 1, 4, blockGroup.formedGateBlock, 0, facing)
+            || !checkBlockAndMeta(world, x, y, z, 2, 4, blockGroup.formedGateBlock, 1, facing)) {
+            deform(world, x, y, z, facing);
+        }
+    }
+
+    private void deform(World world, int x, int y, int z, int facing) {
+        deformRel(world, x, y, z, facing, -2, 0);
+        deformRel(world, x, y, z, facing, -1, 0);
+        deformRel(world, x, y, z, facing, 0, 0);
+        deformRel(world, x, y, z, facing, 1, 0);
+        deformRel(world, x, y, z, facing, 2, 0);
+
+        deformRel(world, x, y, z, facing, -2, 1);
+        deformRel(world, x, y, z, facing, 2, 1);
+        deformRel(world, x, y, z, facing, -2, 2);
+        deformRel(world, x, y, z, facing, 2, 2);
+        deformRel(world, x, y, z, facing, -2, 3);
+        deformRel(world, x, y, z, facing, 2, 3);
+
+        deformRel(world, x, y, z, facing, -2, 4);
+        deformRel(world, x, y, z, facing, -1, 4);
+        deformRel(world, x, y, z, facing, 0, 4);
+        deformRel(world, x, y, z, facing, 1, 4);
+        deformRel(world, x, y, z, facing, 2, 4);
     }
 
     public static class ItemBlockFormedGate extends ItemBlock {

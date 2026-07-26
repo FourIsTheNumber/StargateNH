@@ -1,5 +1,8 @@
 package com.gtnewhorizons.stargatenh.common.block;
 
+import static com.gtnewhorizons.stargatenh.common.util.StructureUtil.checkBlockAndMeta;
+import static com.gtnewhorizons.stargatenh.common.util.StructureUtil.setRel;
+
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -15,7 +18,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.gtnewhorizon.gtnhlib.blockpos.BlockPos;
 import com.gtnewhorizons.stargatenh.ModBlocks;
 
 import cpw.mods.fml.relauncher.Side;
@@ -117,55 +119,6 @@ public class BlockStargateController extends Block {
         setRel(world, x, y, z, facing, 2, 4, blockGroup.formedGateBlock, 1);
 
         world.setBlock(x, y, z, blockGroup.formedGateBlock, facing, 3);
-    }
-
-    private void deform(World world, int x, int y, int z, int facing) {
-        setRel(world, x, y, z, facing, -2, 0, blockGroup.formedGateBlock, 1);
-        setRel(world, x, y, z, facing, -1, 0, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 1, 0, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 2, 0, blockGroup.formedGateBlock, 1);
-
-        setRel(world, x, y, z, facing, -2, 1, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 2, 1, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, -2, 2, blockGroup.formedGateBlock, 1);
-        setRel(world, x, y, z, facing, 2, 2, blockGroup.formedGateBlock, 1);
-        setRel(world, x, y, z, facing, -2, 3, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 2, 3, blockGroup.formedGateBlock, 0);
-
-        setRel(world, x, y, z, facing, -2, 4, blockGroup.formedGateBlock, 1);
-        setRel(world, x, y, z, facing, -1, 4, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 0, 4, blockGroup.formedGateBlock, 1);
-        setRel(world, x, y, z, facing, 1, 4, blockGroup.formedGateBlock, 0);
-        setRel(world, x, y, z, facing, 2, 4, blockGroup.formedGateBlock, 1);
-    }
-
-    private void setRel(World world, int x, int y, int z, int facing, int offsetX, int offsetY, Block newBlock,
-        int newMeta) {
-        BlockPos p = rotate(offsetX, offsetY, facing);
-        world.setBlock(x + p.x, y + p.y, z + p.z, newBlock, newMeta, 3);
-    }
-
-    private boolean checkBlockAndMeta(World world, int x, int y, int z, int offsetX, int offsetY, Block rBlock,
-        int rMeta, int facing) {
-        BlockPos p = rotate(offsetX, offsetY, facing);
-        Block block = world.getBlock(x + p.x, y + p.y, z + p.z);
-        int meta = world.getBlockMetadata(x + p.x, y + p.y, z + p.z);
-
-        return rBlock == block && meta == rMeta;
-    }
-
-    private static BlockPos rotate(int dx, int dy, int facing) {
-        return switch (facing) {
-            case 2 -> // NORTH (-Z)
-                new BlockPos(dx, dy, 0);
-            case 5 -> // EAST (+X)
-                new BlockPos(0, dy, -dx);
-            case 3 -> // SOUTH (+Z)
-                new BlockPos(-dx, dy, -0);
-            case 4 -> // WEST (-X)
-                new BlockPos(-0, dy, dx);
-            default -> new BlockPos(dx, dy, 0);
-        };
     }
 
     public static class ItemBlockStargateController extends ItemBlock {
