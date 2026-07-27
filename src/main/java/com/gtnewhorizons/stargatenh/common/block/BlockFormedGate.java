@@ -14,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -92,6 +93,18 @@ public class BlockFormedGate extends BlockContainer {
         };
         drops.add(drop);
         return drops;
+    }
+
+    @Override
+    public Item getItem(World world, int x, int y, int z) {
+        int meta = world.getBlockMetadata(x, y, z);
+        if (meta < 2) return Item.getItemFromBlock(blockGroup.stargateBlock);
+        return Item.getItemFromBlock(blockGroup.controllerBlock);
+    }
+
+    @Override
+    public int damageDropped(int meta) {
+        return meta;
     }
 
     @Override
